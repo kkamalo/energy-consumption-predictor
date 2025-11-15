@@ -1,6 +1,7 @@
 # Energy Consumption Predictor
 
 A simple tool to predict energy usage, helping users save costs and promote sustainable energy practices.
+A project me and my friends made for AI GENESIS HACKATHON
 
 ## Features
 - Predicts energy consumption
@@ -63,3 +64,4 @@ Enhance the visualization with interactive charts
 
 License
 MIT License
+
