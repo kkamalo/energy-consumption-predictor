@@ -141,21 +141,12 @@ if st.button("Generate AI Insights"):
         country_data = data_filtered[data_filtered["country"] == country].sort_values("year")
         hist_data_text = country_data.to_string()
 
-        prompt = f"""
-        You are an energy data analyst.
-        Here is the historical data for {country}:
-        {hist_data_text}
+
         prompt = f"""
         You are an energy data analyst.
         Here is the historical data for {country}:
         {hist_data_text}
 
-        Provide a clear, short analysis including:
-        - Trend summary
-        - Whether energy use is rising or falling
-        - Any unusual points
-        - A simple recommendation
-        """
         Provide a clear, short analysis including:
         - Trend summary
         - Whether energy use is rising or falling
