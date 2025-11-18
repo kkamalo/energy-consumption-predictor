@@ -3,3 +3,5 @@ requests
 pandas
 statsmodels
 matplotlib
+google-genai
+python-dotenv
