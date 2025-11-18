@@ -29,6 +29,9 @@ indicator = st.selectbox("Indicator", df["indicator"].unique())
 # Filter data for selected countries
 data_filtered = df[(df["country"].isin(countries)) & (df["indicator"] == indicator)] 
 
+if "forecasts" not in st.session_state:
+    st.session_state["forecasts"] = {}
+
 st.write("Historical Data")
 st.dataframe(data_filtered)
 
@@ -51,9 +54,6 @@ for country in countries:
 
 # Forecast Next 5 Years
 if st.button("Forecast Next 5 Years"):
-    plt.figure(figsize=(12, 5))
-    future_forecasts = {}
-
     for country in countries:
         country_data = data_filtered[data_filtered["country"] == country].sort_values("year")
         if len(country_data) < 4:
@@ -64,17 +64,34 @@ if st.button("Forecast Next 5 Years"):
         model = ARIMA(series, order=(2, 1, 2))
         result = model.fit()
         forecast = result.forecast(steps=5)
-        future_forecasts[country] = forecast
 
-        # Plot historical + forecast
-        plt.plot(country_data["year"], series, label=f"{country} Historical")
-        future_years = list(range(int(country_data["year"].max()) + 1, int(country_data["year"].max()) + 6))
-        plt.plot(future_years, forecast, '--', label=f"{country} Forecast")
+        key = (indicator, country)
+        st.session_state["forecasts"][key] = list(forecast)
 
-        # Show forecast table
+plt.figure(figsize=(12, 5))
+has_any_series = False
+
+for country in countries:
+    country_data = data_filtered[data_filtered["country"] == country].sort_values("year")
+    if len(country_data) == 0:
+        continue
+
+    series = country_data["value"]
+    plt.plot(country_data["year"], series, label=f"{country} Historical")
+    has_any_series = True
+
+    key = (indicator, country)
+    forecast_values = st.session_state["forecasts"].get(key)
+    if forecast_values:
+        last_year = int(country_data["year"].max())
+        future_years = list(range(last_year + 1, last_year + 1 + len(forecast_values)))
+        plt.plot(future_years, forecast_values, '--', label=f"{country} Forecast")
+
+        forecast_df = pd.DataFrame({"year": future_years, "forecast": forecast_values})
         st.write(f"Forecast for {country}")
-        future_forecasts[country] = forecast
+        st.dataframe(forecast_df)
 
+if has_any_series:
     plt.xlabel("Year")
     plt.ylabel("Value")
     plt.title(f"{indicator} Comparison & Forecast")
