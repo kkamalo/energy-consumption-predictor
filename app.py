@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+
 api_key = os.getenv("GENAI_API_KEY")
 if not api_key:
     raise ValueError("GENAI_API_KEY not found. Check your .env file.")
