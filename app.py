@@ -3,6 +3,13 @@ import pandas as pd
 import requests
 from statsmodels.tsa.arima.model import ARIMA
 import matplotlib.pyplot as plt
+from google import genai
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+client = genai.Client()
 
 # Load dataset
 df = pd.read_csv("pa-retp-indicators.csv")
@@ -64,3 +71,28 @@ if st.button("Forecast Next 5 Years"):
         st.write(f"The data for {indicator} in {country} shows a continuing trend. Based on past values, "
                  "the forecast predicts similar behavior over the next 5 years. Factors like energy demand and "
                  "growth trends are likely influencing this pattern.")
+
+if st.button("Generate AI Insights"):
+
+    # Prepare a readable summary of the data
+    hist_data_text = data.to_string()
+
+    prompt = f"""
+    You are an energy data analyst.
+    Here is the historical data:
+    {hist_data_text}
+
+    Provide a clear, short analysis including:
+    - Trend summary
+    - Whether energy use is rising or falling
+    - Any unusual points
+    - A simple recommendation
+    """
+
+    insights_response = client.models.generate_content(
+    model="gemini-2.5-flash", contents=prompt
+)
+    print(insights_response)
+
+    st.write("### AI Insights (Powered by Gemini)")
+    st.write(insights_response.text)
