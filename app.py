@@ -11,8 +11,6 @@ load_dotenv()
 
 
 api_key = os.getenv("GENAI_API_KEY")
-if not api_key:
-    raise ValueError("GENAI_API_KEY not found. Check your .env file.")
 
 client = genai.Client(api_key=api_key)
 
@@ -109,3 +107,4 @@ if st.button("Generate AI Insights"):
 
     st.write("### AI Insights (Powered by Gemini)")
     st.markdown(insights_text)
+
